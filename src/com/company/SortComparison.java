@@ -64,7 +64,7 @@ class SortComparison {
      * The best case will be O(N), if the array is already in order, but O(N^2) if the
      * array is in reverse order.
      **/
-    static double [] insertionSort(double a[]) {
+    public static double [] insertionSort(double a[]) {
         double value;
         int  i, j;
         int size = a.length;
@@ -81,10 +81,39 @@ class SortComparison {
             }
             a[j] = value;
         }
-
         return a;
     }
 
+    /**
+     * Modified version of insertion sort, to allow for sorting for a fixed number of
+     * elements within an array.
+     * @param a: An unsorted array of doubles.
+     * @param low: lowest element of the array we should consider while sorting.
+     * @param high: highest element of the array we should consider while sorting.
+     *
+     * O(N^2) worst case/average case, as we are iterating through the whole array in
+     * the first for-loop, then the while-loop will check every preceding value to see
+     * where to store the value. The best case will be O(N), if the array is already in
+     * order, but O(N^2) if the array is in reverse order.
+     **/
+    private static void insertionSort(double a[], int low, int high)
+    {
+        double value;
+        int  i, j;
+        int size = high - low;
+
+        for(i = low + 1; i < size; i++) {
+            value = a[i];
+            j = i;
+
+            while((j > 0) && (a[j-1] > value)) {
+                a[j] = a[j-1];
+                j = j - 1;
+            }
+
+            a[j] = value;
+        }
+    }
     /**
      * Sorts an array of doubles using Selection Sort.
      * This method is static, thus it can be called as SortComparison.sort(a)
@@ -95,7 +124,7 @@ class SortComparison {
      * through the full array again in the second for-loop. Both worst case
      * and best case will be the same, the algorithm is Theta(N^2)
      */
-    static double [] selectionSort (double a[]) {
+    public static double [] selectionSort (double a[]) {
         int length = a.length;
         int i, j;
 
@@ -123,7 +152,7 @@ class SortComparison {
      * @return array sorted in ascending order
      *
      */
-    static double [] quickSort (double a[]){
+    public static double [] quickSort (double a[]){
         if(a == null) return null;
         int length = a.length;
         if(length <= 1) return a;
@@ -134,7 +163,7 @@ class SortComparison {
 
     }//end quicksort
 
-    static void quickSortRecursive(double a[], int low, int high)
+    private static void quickSortRecursive(double a[], int low, int high)
     {
         if(low >= high) return;
         int lessThan = low;
@@ -169,13 +198,22 @@ class SortComparison {
      * Sorts an array of doubles using iterative implementation of Merge Sort.
      * This method is static, thus it can be called as SortComparison.sort(a)
      *
-     * @param a: An unsorted array of doubles.
+     * @param original: An unsorted array of doubles.
      * @return after the method returns, the array must be in ascending sorted order.
      */
 
-    static double[] mergeSortIterative (double a[]) {
+    public static double[] mergeSortIterative (double original[]) {
+        int arraySize = original.length;
+        double temp [] = new double[arraySize];
+        for(int partSize = 1; partSize < arraySize; partSize = partSize + partSize) {
+            // each iteration of this for-loop doubles the size of each
+            // section we are merging, meaning that this for-loop will iterate
+            // lgN times
 
-        return
+            for(int low = 0; low < arraySize - partSize; low += partSize + partSize)
+                merge(original, temp, low, low + partSize - 1, Math.min(low+ partSize + partSize -1, arraySize - 1));
+        }
+        return temp;
 
     }//end mergesortIterative
 
@@ -188,21 +226,51 @@ class SortComparison {
      * @param a: An unsorted array of doubles.
      * @return after the method returns, the array must be in ascending sorted order.
      */
-    static double[] mergeSortRecursive (double a[]) {
+    public static double[] mergeSortRecursive (double a[]) {
+        double temp [] = new double[a.length];
+        if(a.length == 1 || a.length == 0) return a;
+        mergeSortBottomUp(a, temp, 0, a.length-1);
+        return temp;
 
-
-        //todo: implement the sort
     }//end mergeSortRecursive
 
+    private static void mergeSortBottomUp(double original[], double temp[], int low, int high) {
+        if(low >= high) return;
+        if(high <= low + 9) insertionSort(original, low, high);     // cutoff to insertion sort for sections
+                                                                    // of the array smaller than 10
+        int mid = low + (high - low) / 2;
+        mergeSortBottomUp(original, temp, low, mid);
+        mergeSortBottomUp(original, temp, mid+1, high);
+        if(temp[mid+1] >= temp[mid]) return;                         // if the lowest element of the second half is
+                                                                     // greater than the last element of the first half,
+                                                                     // there is no need to merge them.
+        merge(original, temp, low, mid, high);                       // merge first half with second half.
+    }
 
+    private static void merge(double original[], double temp[], int low, int mid, int high) {
+        int i = low, j = mid + 1;
 
-
-
-
+        for(int k = low; k <= high; k++)
+        {
+            if(i > mid) temp[k] = original[j++];
+            else if(j > high) temp[k] = original[i++];
+            else if(temp[j] < temp[i]) temp[k] = original[j++];
+            else temp[k] = original[i++];
+        }
+    }
 
     public static void main(String[] args) {
-
-        //todo: do experiments as per assignment instructions
+        double array [] = {1, 4, 2, 9, 20, 5, 4, 3, 16, 0, 5, 3, 0, 5, 33, 10};
+        insertionSort(array);
+        double array2 [] = {1, 4, 2, 9, 20, 5, 4, 3, 16, 0, 5, 3, 0, 5, 33, 10};
+        selectionSort(array2);
+        double array3 [] = {1, 4, 2, 9, 20, 5, 4, 3, 16, 0, 5, 3, 0, 5, 33, 10};
+        mergeSortRecursive(array3);
+        double array4 [] = {1, 4, 2, 9, 20, 5, 4, 3, 16, 0, 5, 3, 0, 5, 33, 10};
+        mergeSortIterative(array4);
+        double array5 [] = {1, 4, 2, 9, 20, 5, 4, 3, 16, 0, 5, 3, 0, 5, 33, 10};
+        quickSort(array5);
+        
     }
 
 }//end class
