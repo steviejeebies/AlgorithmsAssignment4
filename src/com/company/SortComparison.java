@@ -213,7 +213,7 @@ class SortComparison {
             for(int low = 0; low < arraySize - partSize; low += partSize + partSize)
                 merge(original, temp, low, low + partSize - 1, Math.min(low+ partSize + partSize -1, arraySize - 1));
         }
-        return temp;
+        return original;
 
     }//end mergesortIterative
 
@@ -229,19 +229,19 @@ class SortComparison {
     public static double[] mergeSortRecursive (double a[]) {
         double temp [] = new double[a.length];
         if(a.length == 1 || a.length == 0) return a;
-        mergeSortBottomUp(a, temp, 0, a.length-1);
-        return temp;
+        mergeSortBottomUp(temp, a, 0, a.length-1);
+        return a;
 
     }//end mergeSortRecursive
 
     private static void mergeSortBottomUp(double original[], double temp[], int low, int high) {
         if(low >= high) return;
-        if(high <= low + 9) insertionSort(original, low, high);     // cutoff to insertion sort for sections
+        //if(high <= low + 9) insertionSort(original, low, high);     // cutoff to insertion sort for sections
                                                                     // of the array smaller than 10
         int mid = low + (high - low) / 2;
-        mergeSortBottomUp(original, temp, low, mid);
-        mergeSortBottomUp(original, temp, mid+1, high);
-        if(temp[mid+1] >= temp[mid]) return;                         // if the lowest element of the second half is
+        mergeSortBottomUp(temp, original, low, mid);
+        mergeSortBottomUp(temp, original, mid+1, high);
+        //if(temp[mid+1] >= temp[mid]) return;                         // if the lowest element of the second half is
                                                                      // greater than the last element of the first half,
                                                                      // there is no need to merge them.
         merge(original, temp, low, mid, high);                       // merge first half with second half.
@@ -249,12 +249,11 @@ class SortComparison {
 
     private static void merge(double original[], double temp[], int low, int mid, int high) {
         int i = low, j = mid + 1;
-
         for(int k = low; k <= high; k++)
         {
             if(i > mid) temp[k] = original[j++];
             else if(j > high) temp[k] = original[i++];
-            else if(temp[j] < temp[i]) temp[k] = original[j++];
+            else if(original[j] < original[i]) temp[k] = original[j++];
             else temp[k] = original[i++];
         }
     }
@@ -265,11 +264,12 @@ class SortComparison {
         double array2 [] = {1, 4, 2, 9, 20, 5, 4, 3, 16, 0, 5, 3, 0, 5, 33, 10};
         selectionSort(array2);
         double array3 [] = {1, 4, 2, 9, 20, 5, 4, 3, 16, 0, 5, 3, 0, 5, 33, 10};
-        mergeSortRecursive(array3);
+        array3 = mergeSortRecursive(array3);
         double array4 [] = {1, 4, 2, 9, 20, 5, 4, 3, 16, 0, 5, 3, 0, 5, 33, 10};
-        mergeSortIterative(array4);
-        double array5 [] = {1, 4, 2, 9, 20, 5, 4, 3, 16, 0, 5, 3, 0, 5, 33, 10};
-        quickSort(array5);
+        array4 = mergeSortIterative(array4);
+        //double array5 [] = {1, 4, 2, 9, 20, 5, 4, 3, 16, 0, 5, 3, 0, 5, 33, 10};
+        //quickSort(array5);
+        System.out.println("done");
         
     }
 
