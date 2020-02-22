@@ -189,8 +189,8 @@ class SortComparison {
         while(i < greaterThan)
         {
             iterationValue = a[i];
-            if(iterationValue < lessThan) exchange(a, i++, lessThan++);
-            if(iterationValue > greaterThan) exchange(a, i++, greaterThan--);
+            if(iterationValue < pivotValue) exchange(a, i++, lessThan++);
+            if(iterationValue > pivotValue) exchange(a, i++, greaterThan--);
             else i++;   // if equal, keep in place;
         }
 
