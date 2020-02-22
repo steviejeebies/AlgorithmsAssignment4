@@ -120,26 +120,37 @@ class SortComparison {
      * @param a: An unsorted array of doubles.
      * @return array sorted in ascending order
      *
-     * Theta(N^2), as we are interating through the whole array, then iterating
-     * through the full array again in the second for-loop. Both worst case
-     * and best case will be the same, the algorithm is Theta(N^2)
+     * Theta(N^2) algorithm. First for-loop will iterate through the array
+     * O(N) times. Second for-loop is an aithmetic sequence, which we can consider
+     * as O(N^2). Best case, no exchanges take place, as it is already in order.
+     * Worst-case, we need to exchange every time (i.e. in reverse order). In both
+     * cases, we still need to iterate through the for-loops with O(N^2) as the order
+     * of growth. Therefore, our algorithm is Theta(N)
      */
     public static double [] selectionSort (double a[]) {
         int length = a.length;
         int i, j;
+        boolean needToExchange = false; // can be used to reduce the number of exchanges
 
         for(i = 0; i < length-1; i++)
         {
             int minIndex = i;
             for(j = i+1; j < length; j++)
             {
-                if(a[j] < a[minIndex])
+                if(a[j] < a[minIndex]) {
                     minIndex = j;
+                    needToExchange = true;
+                }
             }
 
-            double tempValue = a[minIndex];
-            a[minIndex] = a[i];
-            a[i] = tempValue;
+            if(needToExchange)
+            {
+                double tempValue = a[minIndex];
+                a[minIndex] = a[i];
+                a[i] = tempValue;
+                needToExchange = false;
+            }
+
         }
 
         return a;
@@ -205,13 +216,25 @@ class SortComparison {
     public static double[] mergeSortIterative (double original[]) {
         int arraySize = original.length;
         double temp [] = new double[arraySize];
+        double switchArray [];  // this is just a pointer, that we will use to switch 'original' and 'temp'
+                                // arrays while calling the merge method. This means we can use the same merge() method
+                                // as the recursive version, meaning we don't have to waste any time copying 'original'
+                                // into 'temp'. This requires no extra memory, other than the space required for the
+                                // pointer itself.
+
         for(int partSize = 1; partSize < arraySize; partSize = partSize + partSize) {
             // each iteration of this for-loop doubles the size of each
             // section we are merging, meaning that this for-loop will iterate
             // lgN times
 
-            for(int low = 0; low < arraySize - partSize; low += partSize + partSize)
-                merge(original, temp, low, low + partSize - 1, Math.min(low+ partSize + partSize -1, arraySize - 1));
+            for(int low = 0; low < arraySize - partSize; low += partSize + partSize) {
+                merge(original, temp, low, low + partSize - 1, Math.min(low + partSize + partSize - 1, arraySize - 1));
+            }
+
+            // switch 'original' and 'temp' for next merge() call
+            switchArray = original;
+            original = temp;
+            temp = switchArray;
         }
         return original;
 
@@ -241,13 +264,16 @@ class SortComparison {
         int mid = low + (high - low) / 2;
         mergeSortBottomUp(temp, original, low, mid);
         mergeSortBottomUp(temp, original, mid+1, high);
-        //if(temp[mid+1] >= temp[mid]) return;                         // if the lowest element of the second half is
+        //if(temp[mid+1] >= temp[mid]) return;                       // if the lowest element of the second half is
                                                                      // greater than the last element of the first half,
                                                                      // there is no need to merge them.
         merge(original, temp, low, mid, high);                       // merge first half with second half.
     }
 
     private static void merge(double original[], double temp[], int low, int mid, int high) {
+        // As we will continuously switch 'original' and 'temp' as the parameters of this method (when calling
+        // in both mergeSortRecursive() and mergeSortIterative()), then we do not need to waste time copying
+        // the elements of 'original' into the elements of 'temp'
         int i = low, j = mid + 1;
         for(int k = low; k <= high; k++)
         {
