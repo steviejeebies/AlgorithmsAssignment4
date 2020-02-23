@@ -4,10 +4,12 @@
  *  This class contains static methods that implementing sorting of an array of numbers
  *  using different sort algorithms.
  *
- *  @author
+ *  @author rowes@tcd.ie
  *  @version HT 2020
  */
+
 package com.company;
+import java.util.Arrays;
 import java.util.Random;
 
 class SortComparison {
@@ -16,7 +18,6 @@ class SortComparison {
      * A method that randomises the order of the array to make it shorter.
      * Based on the Fisher–Yates algorithm.
      * @param arr: An unsorted array of doubles.
-     * @return an array with the order of the elements shuffled
      *
      * Theta(N), we iterate through each element of the array, and all
      * values within the for-loop have a time-complexity of O(1), i.e.
@@ -41,7 +42,6 @@ class SortComparison {
      * @param arr: An array in which we want to exchange elements;
      * @param indexA : index of array element we want to swap the value of with arr[indexB]
      * @param indexB : index of array element we want to swap the value of with arr[indexA]
-     * @return an array with the order of the elements shuffled
      *
      * Theta(1), as there are no for-loops, and all operations are constant.
      */
@@ -50,7 +50,6 @@ class SortComparison {
         double temp = arr[indexA];
         arr[indexA] = arr[indexB];
         arr[indexB] = temp;
-        return;
     }
 
     /**
@@ -96,7 +95,7 @@ class SortComparison {
      * where to store the value. The best case will be O(N), if the array is already in
      * order, but O(N^2) if the array is in reverse order.
      **/
-    private static void insertionSort(double a[], int low, int high)
+    public static void insertionSort(double a[], int low, int high)
     {
         double value;
         int  i, j;
@@ -176,26 +175,37 @@ class SortComparison {
 
     private static void quickSortRecursive(double a[], int low, int high)
     {
+        // This is a 2-pivot implementation of quick sort
+        if(high - low < 10) insertionSort(a, low, high);    // if section of array shorter than 10, cutoff to insertion sort
         if(low >= high) return;
         int lessThan = low;
         int greaterThan = high;
-
-        if(a[lessThan] > a[greaterThan]) exchange(a, lessThan, greaterThan);
-
-        int i = lessThan + 1;
-        double pivotValue = a[lessThan];
+        if(a[lessThan] > a[greaterThan])
+            exchange(a, lessThan, greaterThan);
+        double firstPivotValue = a[lessThan];
+        double secondPivotValue = a[greaterThan];
+        int inBetweenP1P2 = lessThan + 1;
+        int iterationLeft = inBetweenP1P2;
+        int iterationRight = greaterThan - 1;
         double iterationValue;
 
-        while(i < greaterThan)
+        while(iterationLeft <= iterationRight)
         {
-            iterationValue = a[i];
-            if(iterationValue < pivotValue) exchange(a, i++, lessThan++);
-            if(iterationValue > pivotValue) exchange(a, i++, greaterThan--);
-            else i++;   // if equal, keep in place;
+            iterationValue = a[iterationLeft];
+            if(iterationValue < firstPivotValue)
+                exchange(a, iterationLeft++, inBetweenP1P2++);
+            else if(iterationValue > secondPivotValue)
+                exchange(a, iterationLeft, iterationRight--);
+            else iterationLeft++;
         }
 
-        quickSortRecursive(a, low, lessThan - 1);
-        quickSortRecursive(a, greaterThan - 1, high);
+        exchange(a, inBetweenP1P2 - 1, lessThan);
+        exchange(a, iterationRight + 1, greaterThan);
+
+
+        quickSortRecursive(a, low,  inBetweenP1P2 - 2);
+        quickSortRecursive(a, inBetweenP1P2, iterationRight);
+        quickSortRecursive(a, iterationRight + 1, high);
     }
 
     /**
@@ -216,28 +226,15 @@ class SortComparison {
     public static double[] mergeSortIterative (double original[]) {
         int arraySize = original.length;
         double temp [] = new double[arraySize];
-        double switchArray [];  // this is just a pointer, that we will use to switch 'original' and 'temp'
-                                // arrays while calling the merge method. This means we can use the same merge() method
-                                // as the recursive version, meaning we don't have to waste any time copying 'original'
-                                // into 'temp'. This requires no extra memory, other than the space required for the
-                                // pointer itself.
-
         for(int partSize = 1; partSize < arraySize; partSize = partSize + partSize) {
             // each iteration of this for-loop doubles the size of each
             // section we are merging, meaning that this for-loop will iterate
             // lgN times
-
             for(int low = 0; low < arraySize - partSize; low += partSize + partSize) {
                 merge(original, temp, low, low + partSize - 1, Math.min(low + partSize + partSize - 1, arraySize - 1));
             }
-
-            // switch 'original' and 'temp' for next merge() call
-            switchArray = original;
-            original = temp;
-            temp = switchArray;
         }
         return original;
-
     }//end mergesortIterative
 
 
@@ -252,50 +249,47 @@ class SortComparison {
     public static double[] mergeSortRecursive (double a[]) {
         double temp [] = new double[a.length];
         if(a.length == 1 || a.length == 0) return a;
-        mergeSortBottomUp(temp, a, 0, a.length-1);
+        mergeSortBottomUp(a, temp, 0, a.length-1);
         return a;
-
     }//end mergeSortRecursive
 
     private static void mergeSortBottomUp(double original[], double temp[], int low, int high) {
-        if(low >= high) return;
-        //if(high <= low + 9) insertionSort(original, low, high);     // cutoff to insertion sort for sections
+        if(high <= low) return;
+        if(high <= low + 9) insertionSort(original, low, high);     // cutoff to insertion sort for sections
                                                                     // of the array smaller than 10
-        int mid = low + (high - low) / 2;
-        mergeSortBottomUp(temp, original, low, mid);
-        mergeSortBottomUp(temp, original, mid+1, high);
-        //if(temp[mid+1] >= temp[mid]) return;                       // if the lowest element of the second half is
-                                                                     // greater than the last element of the first half,
-                                                                     // there is no need to merge them.
+        int mid = low + ((high - low) / 2);
+        mergeSortBottomUp(original, temp, low, mid);
+        mergeSortBottomUp(original, temp, mid+1, high);
+        if(original[mid+1] > original[mid]) return;
         merge(original, temp, low, mid, high);                       // merge first half with second half.
     }
 
     private static void merge(double original[], double temp[], int low, int mid, int high) {
-        // As we will continuously switch 'original' and 'temp' as the parameters of this method (when calling
-        // in both mergeSortRecursive() and mergeSortIterative()), then we do not need to waste time copying
-        // the elements of 'original' into the elements of 'temp'
+        for(int i = low; i <= high; i++)
+            temp[i] = original[i];
         int i = low, j = mid + 1;
         for(int k = low; k <= high; k++)
         {
-            if(i > mid) temp[k] = original[j++];
-            else if(j > high) temp[k] = original[i++];
-            else if(original[j] < original[i]) temp[k] = original[j++];
-            else temp[k] = original[i++];
+            if(i > mid) original[k] = temp[j++];
+            else if(j > high) original[k] = temp[i++];
+            else if(temp[j] < temp[i]) original[k] = temp[j++];
+            else original[k] = temp[i++];
         }
     }
 
     public static void main(String[] args) {
-        double array [] = {1, 4, 2, 9, 20, 5, 4, 3, 16, 0, 5, 3, 0, 5, 33, 10};
-        insertionSort(array);
-        double array2 [] = {1, 4, 2, 9, 20, 5, 4, 3, 16, 0, 5, 3, 0, 5, 33, 10};
+        double array [] = {1, 4, 2, 9, 20, 5, 4, 3, 16, 0, 5, 3, 0, 5, 33, 10, 11, 11, 12, 13, 13, 13, 13};
+        double array1 [] = Arrays.copyOf(array, array.length);
+        insertionSort(array1);
+        double array2 [] = Arrays.copyOf(array, array.length);
         selectionSort(array2);
-        double array3 [] = {1, 4, 2, 9, 20, 5, 4, 3, 16, 0, 5, 3, 0, 5, 33, 10};
-        array3 = mergeSortRecursive(array3);
-        double array4 [] = {1, 4, 2, 9, 20, 5, 4, 3, 16, 0, 5, 3, 0, 5, 33, 10};
+        double array3 [] = Arrays.copyOf(array, array.length);
+        mergeSortRecursive(array3);
+        double array4 [] = Arrays.copyOf(array, array.length);
         array4 = mergeSortIterative(array4);
-        //double array5 [] = {1, 4, 2, 9, 20, 5, 4, 3, 16, 0, 5, 3, 0, 5, 33, 10};
-        //quickSort(array5);
-        System.out.println("done");
+        double array5 [] = Arrays.copyOf(array, array.length);
+        quickSort(array5);
+        System.out.println(Arrays.equals(array1, array5));
         
     }
 
