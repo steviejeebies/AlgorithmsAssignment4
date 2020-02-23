@@ -278,7 +278,7 @@ class SortComparison {
     }
 
     public static void main(String[] args) {
-        double array [] = {1, 4, 2, 9, 20, 5, 4, 3, 16, 0, 5, 3, 0, 5, 33, 10, 11, 11, 12, 13, 13, 13, 13};
+        double array [] = {1, 4, 2, 9, 20, 5, 4, 3, 16, 0, 5, 3, 0, 5, 33, 10, 11, 11, 12, 13, 13, 4, 12};
         double array1 [] = Arrays.copyOf(array, array.length);
         insertionSort(array1);
         double array2 [] = Arrays.copyOf(array, array.length);
@@ -289,7 +289,7 @@ class SortComparison {
         array4 = mergeSortIterative(array4);
         double array5 [] = Arrays.copyOf(array, array.length);
         quickSort(array5);
-        System.out.println(Arrays.equals(array1, array5));
+        System.out.println(Arrays.equals(array1, array3));
         
     }
 
