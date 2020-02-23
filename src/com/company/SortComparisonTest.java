@@ -1,8 +1,9 @@
 package com.company;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
-import com.company.SortComparison;
+import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
@@ -11,6 +12,7 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
+import java.util.Arrays;
 
 //-------------------------------------------------------------------------
 
@@ -38,34 +40,171 @@ public class SortComparisonTest {
      */
     @Test
     public void testEmpty() {
+        double [] empty = {};
+        double [] emptyCopy = {};
+        double [] result;
 
+        result = SortComparison.insertionSort(empty);
+        Assert.assertArrayEquals(emptyCopy, result, 0);
+        result = SortComparison.selectionSort(empty);
+        Assert.assertArrayEquals(emptyCopy, result, 0);
+        result = SortComparison.mergeSortIterative(empty);
+        Assert.assertArrayEquals(emptyCopy, result, 0);
+        result = SortComparison.mergeSortRecursive(empty);
+        Assert.assertArrayEquals(emptyCopy, result, 0);
+        result = SortComparison.quickSort(empty);
+        Assert.assertArrayEquals(emptyCopy, result, 0);
     }
 
+    @Test
+    public void testArray1Element() {
+        double [] numbers1 = {1};
+        double [] numbers1Copy = {1};
+        double [] result;
 
-    // TODO: add more tests here. Each line of code and ech decision in Collinear.java should
-    // be executed at least once from at least one test.
+        result = SortComparison.insertionSort(numbers1);
+        Assert.assertArrayEquals(numbers1Copy, result, 0);
+        result = SortComparison.selectionSort(numbers1);
+        Assert.assertArrayEquals(numbers1Copy, result, 0);
+        result = SortComparison.mergeSortIterative(numbers1);
+        Assert.assertArrayEquals(numbers1Copy, result, 0);
+        result = SortComparison.mergeSortRecursive(numbers1);
+        Assert.assertArrayEquals(numbers1Copy, result, 0);
+        result = SortComparison.quickSort(numbers1);
+        Assert.assertArrayEquals(numbers1Copy, result, 0);
+    }
 
-    // ----------------------------------------------------------
+    @Test
+    public void assertAllSortingAlgorithmResultsEqual() {
+
+        double [] numbers1000 = getDoubleArrayFromTextFile("numbers1000.txt", 1000);
+        double [] numbers1000Duplicates = getDoubleArrayFromTextFile("numbers1000Duplicates.txt", 1000);
+        double [] numbersNearlyOrdered1000 = getDoubleArrayFromTextFile("numbersNearlyOrdered1000.txt", 1000);
+        double [] numbersReverse1000 = getDoubleArrayFromTextFile("numbersReverse1000.txt", 1000);
+        double [] numbersSorted1000 = getDoubleArrayFromTextFile("numbersSorted1000.txt", 1000);
+
+        assertTrue(testAllAlgorithms(numbers1000));
+        assertTrue(testAllAlgorithms(numbers1000Duplicates));
+        assertTrue(testAllAlgorithms(numbersNearlyOrdered1000));
+        assertTrue(testAllAlgorithms(numbersReverse1000));
+        assertTrue(testAllAlgorithms(numbersSorted1000));
+    }
+
+    public static boolean testAllAlgorithms(double [] arrayToSort) {
+        double [] originalCopy = Arrays.copyOf(arrayToSort, arrayToSort.length);
+        double [] insertionSortResult = SortComparison.insertionSort(arrayToSort);
+        double [] result;
+        // For this, we have to assume insertion sort is correct. Since it should match all other
+        // algorithms anyway, and if all tests are passed, then we can also assume insertion
+        // sort is also correct
+
+        result = SortComparison.selectionSort(originalCopy);
+        if(!Arrays.equals(insertionSortResult, result)) return false;
+
+        originalCopy = Arrays.copyOf(arrayToSort, arrayToSort.length);
+        result = SortComparison.mergeSortIterative(originalCopy);
+        if(!Arrays.equals(insertionSortResult, result)) return false;
+
+        originalCopy = Arrays.copyOf(arrayToSort, arrayToSort.length);
+        result = SortComparison.mergeSortRecursive(originalCopy);
+        if(!Arrays.equals(insertionSortResult, result)) return false;
+
+        originalCopy = Arrays.copyOf(arrayToSort, arrayToSort.length);
+        result = SortComparison.quickSort(originalCopy);
+        if(!Arrays.equals(insertionSortResult, result)) return false;
+
+        return true;
+    }
 
     /**
      * Main Method.
      * Use this main method to create the experiments needed to answer the experimental performance questions of this assignment.
      */
     public static void main(String[] args) {
-        double [] empty = {};
-        double [] number1 = {1};
-        double [] numbers10 = getArrayFromTextFile("numbers10.txt", 10);
-        double [] numbers100 = getArrayFromTextFile("numbers100.txt", 100);
-        double [] numbers1000 = getArrayFromTextFile("numbers1000.txt", 1000);
-        double [] numbers1000Duplicates = getArrayFromTextFile("numbers1000Duplicates.txt", 1000);
-        double [] numbersNearlyOrdered1000 = getArrayFromTextFile("numbersNearlyOrdered1000.txt", 1000);
-        double [] numbersReverse1000 = getArrayFromTextFile("numbersReverse1000.txt", 1000);
-        double [] numbersSorted1000 = getArrayFromTextFile("numbersSorted1000.txt", 1000);
+        double [] numbers10 = getDoubleArrayFromTextFile("numbers10.txt", 10);
+        double [] numbers100 = getDoubleArrayFromTextFile("numbers100.txt", 100);
+        double [] numbers1000 = getDoubleArrayFromTextFile("numbers1000.txt", 1000);
+        double [] numbers1000Duplicates = getDoubleArrayFromTextFile("numbers1000Duplicates.txt", 1000);
+        double [] numbersNearlyOrdered1000 = getDoubleArrayFromTextFile("numbersNearlyOrdered1000.txt", 1000);
+        double [] numbersReverse1000 = getDoubleArrayFromTextFile("numbersReverse1000.txt", 1000);
+        double [] numbersSorted1000 = getDoubleArrayFromTextFile("numbersSorted1000.txt", 1000);
+
+        long [] num10Durations = new long [5];
+        long [] num100Durations = new long [5];
+        long [] num1000Durations = new long [5];
+        long [] num1000DuplicatesDurations = new long [5];
+        long [] num1000NearlyOrderedDurations = new long [5];
+        long [] num1000ReverseDurations = new long [5];
+        long [] num1000SortedDurations = new long [5];
+
+        getDurationAllAlgorithms(numbers10, num10Durations);
+        getDurationAllAlgorithms(numbers100, num100Durations);
+        getDurationAllAlgorithms(numbers1000, num1000Durations);
+        getDurationAllAlgorithms(numbers1000Duplicates, num1000DuplicatesDurations);
+        getDurationAllAlgorithms(numbersNearlyOrdered1000, num1000NearlyOrderedDurations);
+        getDurationAllAlgorithms(numbersReverse1000, num1000ReverseDurations);
+        getDurationAllAlgorithms(numbersSorted1000, num1000SortedDurations);
+
+        for(int i = 0; i < 5; i++)
+        {
+            num10Durations[i] = num10Durations[i]/3;
+            num100Durations[i] = num100Durations[i]/3;
+            num1000Durations[i] = num1000Durations[i]/3;
+            num1000DuplicatesDurations[i] = num1000DuplicatesDurations[i]/3;
+            num1000NearlyOrderedDurations[i] = num1000NearlyOrderedDurations[i]/3;
+            num1000ReverseDurations[i] = num1000ReverseDurations[i]/3;
+            num1000SortedDurations[i] = num1000SortedDurations[i]/3;
+        }
+
+        System.out.println("Insert Select Quick MergeR MergeI");
+        System.out.println(num10Durations[0] + " " + num10Durations[1] + " " + num10Durations[2] + " " + num10Durations[3] + " " + num10Durations[4] + " ");
+        System.out.println(num100Durations[0] + " " + num100Durations[1] + " " + num100Durations[2] + " " + num100Durations[3] + " " + num100Durations[4] + " ");
+        System.out.println(num1000Durations[0] + " " + num1000Durations[1] + " " + num1000Durations[2] + " " + num1000Durations[3] + " " + num1000Durations[4] + " ");
+        System.out.println(num1000DuplicatesDurations[0] + " " + num1000DuplicatesDurations[1] + " " + num1000DuplicatesDurations[2] + " " + num1000DuplicatesDurations[3] + " " + num1000DuplicatesDurations[4] + " ");
+        System.out.println(num1000NearlyOrderedDurations[0] + " " + num1000NearlyOrderedDurations[1] + " " + num1000NearlyOrderedDurations[2] + " " + num1000NearlyOrderedDurations[3] + " " + num1000NearlyOrderedDurations[4] + " ");
+        System.out.println(num1000SortedDurations[0] + " " + num1000SortedDurations[1] + " " + num1000SortedDurations[2] + " " + num1000SortedDurations[3] + " " + num1000SortedDurations[4] + " ");
+
+
+        // have to get copy arrays, as some of the algorithms are in-place:
+    }
+
+    public static void getDurationAllAlgorithms(double [] array, long [] durationArray)
+    {
+        double [] originalCopy = Arrays.copyOf(array, array.length);
+        double [] result;
+        long start;
+        long end;
+
+        start = System.nanoTime();
+        result = SortComparison.insertionSort(originalCopy);
+        end = System.nanoTime();
+        durationArray[0] += end - start;
+        originalCopy = Arrays.copyOf(array, array.length);
+        start = System.nanoTime();
+        result = SortComparison.selectionSort(originalCopy);
+        end = System.nanoTime();
+        originalCopy = Arrays.copyOf(array, array.length);
+        durationArray[1] += end - start;
+        start = System.nanoTime();
+        result = SortComparison.quickSort(originalCopy);
+        end = System.nanoTime();
+        originalCopy = Arrays.copyOf(array, array.length);
+        durationArray[2] += end - start;
+        start = System.nanoTime();
+        result = SortComparison.mergeSortRecursive(originalCopy);
+        end = System.nanoTime();
+        durationArray[3] += end - start;
+        originalCopy = Arrays.copyOf(array, array.length);
+        start = System.nanoTime();
+        result = SortComparison.mergeSortIterative(originalCopy);
+        end = System.nanoTime();
+        durationArray[4] += end - start;
+        originalCopy = Arrays.copyOf(array, array.length);
 
 
     }
 
-    public static double [] getArrayFromTextFile(String fileName, int arraySize)
+    public static double [] getDoubleArrayFromTextFile(String fileName, int arraySize)
     {
         double [] returnArray = new double[arraySize];
         int i = 0; // array index
@@ -73,11 +212,11 @@ public class SortComparisonTest {
             File file = new File(fileName);    //creates a new file instance
             FileReader ourFileReader = new FileReader(file);   //reads the file
             BufferedReader ourBufferedReader = new BufferedReader(ourFileReader);
-            while (i < arraySize) {
+            while (i < arraySize)
                 returnArray[i++] = Double.parseDouble(ourBufferedReader.readLine());
-            }
             ourFileReader.close();    //closes the stream and release the resources
-        } catch (IOException e) {
+        }
+        catch (IOException e) {
             e.printStackTrace();
         }
         return returnArray;

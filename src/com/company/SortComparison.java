@@ -24,7 +24,7 @@ class SortComparison {
      * they are constant values.
      *
      */
-    static void randomizeArray(double arr[])
+    public static void randomizeArray(double arr[])
     {
         Random randomValue = new Random();
         int length = arr.length;
@@ -45,7 +45,7 @@ class SortComparison {
      *
      * Theta(1), as there are no for-loops, and all operations are constant.
      */
-    static void exchange(double arr[], int indexA, int indexB)
+    private static void exchange(double arr[], int indexA, int indexB)
     {
         double temp = arr[indexA];
         arr[indexA] = arr[indexB];
@@ -136,20 +136,20 @@ class SortComparison {
             int minIndex = i;
             for(j = i+1; j < length; j++)
             {
-                if(a[j] < a[minIndex]) {
+                if(a[j] < a[minIndex])
+                {
                     minIndex = j;
                     needToExchange = true;
                 }
+
             }
 
-            if(needToExchange)
-            {
+            if(needToExchange) {
                 double tempValue = a[minIndex];
                 a[minIndex] = a[i];
                 a[i] = tempValue;
                 needToExchange = false;
             }
-
         }
 
         return a;
@@ -166,7 +166,7 @@ class SortComparison {
         if(a == null) return null;
         int length = a.length;
         if(length <= 1) return a;
-        if(length <= 10) return insertionSort(a);   //if length <= 10, cut-off to insertion sort
+        //if(length <= 10) return insertionSort(a);   //if length <= 10, cut-off to insertion sort
         randomizeArray(a);      // O(N)
         quickSortRecursive(a, 0, a.length-1);
         return a;
@@ -176,7 +176,7 @@ class SortComparison {
     private static void quickSortRecursive(double a[], int low, int high)
     {
         // This is a 2-pivot implementation of quick sort
-        if(high - low < 10) insertionSort(a, low, high);    // if section of array shorter than 10, cutoff to insertion sort
+        //if(high - low < 10) insertionSort(a, low, high);    // if section of array shorter than 10, cutoff to insertion sort
         if(low >= high) return;
         int lessThan = low;
         int greaterThan = high;
@@ -238,8 +238,6 @@ class SortComparison {
         return original;
     }//end mergesortIterative
 
-
-
     /**
      * Sorts an array of doubles using recursive implementation of Merge Sort.
      * This method is static, thus it can be called as SortComparison.sort(a)
@@ -256,7 +254,7 @@ class SortComparison {
 
     private static void mergeSortBottomUp(double original[], double temp[], int low, int high) {
         if(high <= low) return;
-        if(high <= low + 9) insertionSort(original, low, high);     // cutoff to insertion sort for sections
+        //if(high <= low + 9) insertionSort(original, low, high);     // cutoff to insertion sort for sections
                                                                     // of the array smaller than 10
         int mid = low + ((high - low) / 2);
         mergeSortBottomUp(original, temp, low, mid);
@@ -278,9 +276,9 @@ class SortComparison {
         }
     }
 
-    public static void main(String[] args) {
-        //todo: do experiments as per assignment instructions
-    }
+//    public static void main(String[] args) {
+//
+//    }
 
 }//end class
 
