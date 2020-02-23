@@ -38,10 +38,8 @@ public class SortComparisonTest {
      */
     @Test
     public void testEmpty() {
-    }
 
-    @Test
-    public void test
+    }
 
 
     // TODO: add more tests here. Each line of code and ech decision in Collinear.java should
@@ -54,25 +52,36 @@ public class SortComparisonTest {
      * Use this main method to create the experiments needed to answer the experimental performance questions of this assignment.
      */
     public static void main(String[] args) {
+        double [] empty = {};
+        double [] number1 = {1};
+        double [] numbers10 = getArrayFromTextFile("numbers10.txt", 10);
+        double [] numbers100 = getArrayFromTextFile("numbers100.txt", 100);
+        double [] numbers1000 = getArrayFromTextFile("numbers1000.txt", 1000);
+        double [] numbers1000Duplicates = getArrayFromTextFile("numbers1000Duplicates.txt", 1000);
+        double [] numbersNearlyOrdered1000 = getArrayFromTextFile("numbersNearlyOrdered1000.txt", 1000);
+        double [] numbersReverse1000 = getArrayFromTextFile("numbersReverse1000.txt", 1000);
+        double [] numbersSorted1000 = getArrayFromTextFile("numbersSorted1000.txt", 1000);
+
+
+    }
+
+    public static double [] getArrayFromTextFile(String fileName, int arraySize)
+    {
+        double [] returnArray = new double[arraySize];
+        int i = 0; // array index
         try {
-            File file = new File("Demo.txt");    //creates a new file instance
-            FileReader fr = new FileReader(file);   //reads the file
-            BufferedReader br = new BufferedReader(fr);  //creates a buffering character input stream
-            StringBuffer sb = new StringBuffer();    //constructs a string buffer with no characters
-            String line;
-            while ((line = br.readLine()) != null) {
-                sb.append(line);      //appends line to string buffer
-                sb.append("\n");     //line feed
+            File file = new File(fileName);    //creates a new file instance
+            FileReader ourFileReader = new FileReader(file);   //reads the file
+            BufferedReader ourBufferedReader = new BufferedReader(ourFileReader);
+            while (i < arraySize) {
+                returnArray[i++] = Double.parseDouble(ourBufferedReader.readLine());
             }
-            fr.close();    //closes the stream and release the resources
-            System.out.println("Contents of File: ");
-            System.out.println(sb.toString());   //returns a string that textually represents the object
+            ourFileReader.close();    //closes the stream and release the resources
         } catch (IOException e) {
             e.printStackTrace();
         }
-    }
-}
+        return returnArray;
     }
 
-            }
+}
 

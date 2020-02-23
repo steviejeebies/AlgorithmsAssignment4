@@ -224,6 +224,7 @@ class SortComparison {
      */
 
     public static double[] mergeSortIterative (double original[]) {
+        if(original.length <= 1) return original;
         int arraySize = original.length;
         double temp [] = new double[arraySize];
         for(int partSize = 1; partSize < arraySize; partSize = partSize + partSize) {
@@ -247,8 +248,8 @@ class SortComparison {
      * @return after the method returns, the array must be in ascending sorted order.
      */
     public static double[] mergeSortRecursive (double a[]) {
+        if(a.length <= 1) return a;
         double temp [] = new double[a.length];
-        if(a.length == 1 || a.length == 0) return a;
         mergeSortBottomUp(a, temp, 0, a.length-1);
         return a;
     }//end mergeSortRecursive
@@ -278,19 +279,7 @@ class SortComparison {
     }
 
     public static void main(String[] args) {
-        double array [] = {1, 4, 2, 9, 20, 5, 4, 3, 16, 0, 5, 3, 0, 5, 33, 10, 11, 11, 12, 13, 13, 4, 12};
-        double array1 [] = Arrays.copyOf(array, array.length);
-        insertionSort(array1);
-        double array2 [] = Arrays.copyOf(array, array.length);
-        selectionSort(array2);
-        double array3 [] = Arrays.copyOf(array, array.length);
-        mergeSortRecursive(array3);
-        double array4 [] = Arrays.copyOf(array, array.length);
-        array4 = mergeSortIterative(array4);
-        double array5 [] = Arrays.copyOf(array, array.length);
-        quickSort(array5);
-        System.out.println(Arrays.equals(array1, array3));
-        
+        //todo: do experiments as per assignment instructions
     }
 
 }//end class
