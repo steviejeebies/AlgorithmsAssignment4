@@ -137,13 +137,15 @@ public class SortComparisonTest {
         long [] num1000ReverseDurations = new long [5];
         long [] num1000SortedDurations = new long [5];
 
-        getDurationAllAlgorithms(numbers10, num10Durations);
-        getDurationAllAlgorithms(numbers100, num100Durations);
-        getDurationAllAlgorithms(numbers1000, num1000Durations);
-        getDurationAllAlgorithms(numbers1000Duplicates, num1000DuplicatesDurations);
-        getDurationAllAlgorithms(numbersNearlyOrdered1000, num1000NearlyOrderedDurations);
-        getDurationAllAlgorithms(numbersReverse1000, num1000ReverseDurations);
-        getDurationAllAlgorithms(numbersSorted1000, num1000SortedDurations);
+        for(int i = 0; i < 3; i++) {
+            getDurationAllAlgorithms(numbers10, num10Durations);
+            getDurationAllAlgorithms(numbers100, num100Durations);
+            getDurationAllAlgorithms(numbers1000, num1000Durations);
+            getDurationAllAlgorithms(numbers1000Duplicates, num1000DuplicatesDurations);
+            getDurationAllAlgorithms(numbersNearlyOrdered1000, num1000NearlyOrderedDurations);
+            getDurationAllAlgorithms(numbersReverse1000, num1000ReverseDurations);
+            getDurationAllAlgorithms(numbersSorted1000, num1000SortedDurations);
+        }
 
         for(int i = 0; i < 5; i++)
         {
@@ -156,14 +158,13 @@ public class SortComparisonTest {
             num1000SortedDurations[i] = num1000SortedDurations[i]/3;
         }
 
-        System.out.println("Insert Select Quick MergeR MergeI");
-        System.out.println(num10Durations[0] + " " + num10Durations[1] + " " + num10Durations[2] + " " + num10Durations[3] + " " + num10Durations[4] + " ");
-        System.out.println(num100Durations[0] + " " + num100Durations[1] + " " + num100Durations[2] + " " + num100Durations[3] + " " + num100Durations[4] + " ");
-        System.out.println(num1000Durations[0] + " " + num1000Durations[1] + " " + num1000Durations[2] + " " + num1000Durations[3] + " " + num1000Durations[4] + " ");
-        System.out.println(num1000DuplicatesDurations[0] + " " + num1000DuplicatesDurations[1] + " " + num1000DuplicatesDurations[2] + " " + num1000DuplicatesDurations[3] + " " + num1000DuplicatesDurations[4] + " ");
-        System.out.println(num1000NearlyOrderedDurations[0] + " " + num1000NearlyOrderedDurations[1] + " " + num1000NearlyOrderedDurations[2] + " " + num1000NearlyOrderedDurations[3] + " " + num1000NearlyOrderedDurations[4] + " ");
-        System.out.println(num1000SortedDurations[0] + " " + num1000SortedDurations[1] + " " + num1000SortedDurations[2] + " " + num1000SortedDurations[3] + " " + num1000SortedDurations[4] + " ");
-
+        System.out.println(PrintResults(num10Durations, "10"));
+        System.out.println(PrintResults(num100Durations, "100"));
+        System.out.println(PrintResults(num1000Durations, "1000"));
+        System.out.println(PrintResults(num1000DuplicatesDurations, "1000Dup"));
+        System.out.println(PrintResults(num1000NearlyOrderedDurations, "1000NO"));
+        System.out.println(PrintResults(num1000ReverseDurations, "1000Rev"));
+        System.out.println(PrintResults(num1000SortedDurations, "1000Sort"));
 
         // have to get copy arrays, as some of the algorithms are in-place:
     }
@@ -175,33 +176,42 @@ public class SortComparisonTest {
         long start;
         long end;
 
+        SortComparison ourCompAlgorithms = new SortComparison();
+
         start = System.nanoTime();
-        result = SortComparison.insertionSort(originalCopy);
+        result = ourCompAlgorithms.insertionSort(originalCopy);
         end = System.nanoTime();
         durationArray[0] += end - start;
         originalCopy = Arrays.copyOf(array, array.length);
         start = System.nanoTime();
-        result = SortComparison.selectionSort(originalCopy);
+        result = ourCompAlgorithms.selectionSort(originalCopy);
         end = System.nanoTime();
         originalCopy = Arrays.copyOf(array, array.length);
         durationArray[1] += end - start;
         start = System.nanoTime();
-        result = SortComparison.quickSort(originalCopy);
+        result = ourCompAlgorithms.quickSort(originalCopy);
         end = System.nanoTime();
         originalCopy = Arrays.copyOf(array, array.length);
         durationArray[2] += end - start;
         start = System.nanoTime();
-        result = SortComparison.mergeSortRecursive(originalCopy);
+        result = ourCompAlgorithms.mergeSortRecursive(originalCopy);
         end = System.nanoTime();
         durationArray[3] += end - start;
         originalCopy = Arrays.copyOf(array, array.length);
         start = System.nanoTime();
-        result = SortComparison.mergeSortIterative(originalCopy);
+        result = ourCompAlgorithms.mergeSortIterative(originalCopy);
         end = System.nanoTime();
         durationArray[4] += end - start;
         originalCopy = Arrays.copyOf(array, array.length);
 
 
+
+
+    }
+
+    public static String PrintResults(long [] result, String arrayName)
+    {
+        return arrayName + ": INS[" + result[0] + "] SEL[" + result[1] + "] QCK[" + result[2] + "] MGR[" + result[3] + "] MGI[" + result[4] + ']';
     }
 
     public static double [] getDoubleArrayFromTextFile(String fileName, int arraySize)

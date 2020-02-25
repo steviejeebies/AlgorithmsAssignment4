@@ -64,22 +64,7 @@ class SortComparison {
      * array is in reverse order.
      **/
     public static double [] insertionSort(double a[]) {
-        double value;
-        int  i, j;
-        int size = a.length;
-
-        for(i = 1; i < size; i++)
-        {
-            value = a[i];
-            j = i;
-
-            while((j > 0) && (a[j-1] > value))
-            {
-                a[j] = a[j-1];
-                j = j - 1;
-            }
-            a[j] = value;
-        }
+        insertionSort(a, 0, a.length-1);
         return a;
     }
 
@@ -109,7 +94,6 @@ class SortComparison {
                 a[j] = a[j-1];
                 j = j - 1;
             }
-
             a[j] = value;
         }
     }
@@ -162,12 +146,71 @@ class SortComparison {
      * @return array sorted in ascending order
      *
      */
+
+//    public static double [] quickSort (double a[]) {
+//        if(a.length <= 1) return a;
+//        sort(a, 0, a.length-1);
+//        return a;
+//    }
+//
+//    static int partition(double arr[], int low, int high)
+//    {
+//        double pivot = arr[high];
+//        int i = (low-1); // index of smaller element
+//        for (int j=low; j<high; j++)
+//        {
+//            // If current element is smaller than the pivot
+//            if (arr[j] < pivot)
+//            {
+//                i++;
+//
+//                // swap arr[i] and arr[j]
+//                double temp = arr[i];
+//                arr[i] = arr[j];
+//                arr[j] = temp;
+//            }
+//        }
+//
+//        // swap arr[i+1] and arr[high] (or pivot)
+//        double temp = arr[i+1];
+//        arr[i+1] = arr[high];
+//        arr[high] = temp;
+//
+//        return i+1;
+//    }
+//
+//
+//    /* The main function that implements QuickSort()
+//      arr[] --> Array to be sorted,
+//      low  --> Starting index,
+//      high  --> Ending index */
+//    public static void sort(double arr[], int low, int high)
+//    {
+//
+//        if (low < high)
+//        {
+//            if(high - low < 10) insertionSort(arr, low, high);
+//            else {
+//                /* pi is partitioning index, arr[pi] is
+//                  now at right place */
+//                int pi = partition(arr, low, high);
+//
+//                // Recursively sort elements before
+//                // partition and after partition
+//                sort(arr, low, pi - 1);
+//                sort(arr, pi + 1, high);
+//            }
+//        }
+//    }
+//
+    // corrected 2-pivot quicksort
+
     public static double [] quickSort (double a[]){
         if(a == null) return null;
         int length = a.length;
         if(length <= 1) return a;
-        //if(length <= 10) return insertionSort(a);   //if length <= 10, cut-off to insertion sort
-        randomizeArray(a);      // O(N)
+        if(length <= 10) return insertionSort(a);   //if length <= 10, cut-off to insertion sort
+        //randomizeArray(a);      // O(N)
         quickSortRecursive(a, 0, a.length-1);
         return a;
 
@@ -176,37 +219,71 @@ class SortComparison {
     private static void quickSortRecursive(double a[], int low, int high)
     {
         // This is a 2-pivot implementation of quick sort
-        //if(high - low < 10) insertionSort(a, low, high);    // if section of array shorter than 10, cutoff to insertion sort
+        //if(high - low < 10) insertionSort(a, low, high);    // if section of array shorter than 10, cutoff to insertion sort LEAVE IN
         if(low >= high) return;
-        int lessThan = low;
-        int greaterThan = high;
-        if(a[lessThan] > a[greaterThan])
-            exchange(a, lessThan, greaterThan);
-        double firstPivotValue = a[lessThan];
-        double secondPivotValue = a[greaterThan];
-        int inBetweenP1P2 = lessThan + 1;
-        int iterationLeft = inBetweenP1P2;
-        int iterationRight = greaterThan - 1;
-        double iterationValue;
+        if(a[low] > a[high]) exchange(a, low, high);
+        int lessThan = low + 1, greaterThan = high - 1;
+        int i = low + 1;
 
-        while(iterationLeft <= iterationRight)
+        while(i <= greaterThan)
         {
-            iterationValue = a[iterationLeft];
-            if(iterationValue < firstPivotValue)
-                exchange(a, iterationLeft++, inBetweenP1P2++);
-            else if(iterationValue > secondPivotValue)
-                exchange(a, iterationLeft, iterationRight--);
-            else iterationLeft++;
+            if(a[i] < a[low]) exchange(a, lessThan++, i++);
+            else if(a[i] > a[high]) exchange(a, i, greaterThan--);
+            else i++;
         }
 
-        exchange(a, inBetweenP1P2 - 1, lessThan);
-        exchange(a, iterationRight + 1, greaterThan);
+        exchange(a, low, --lessThan);
+        exchange(a, high, ++greaterThan);
 
-
-        quickSortRecursive(a, low,  inBetweenP1P2 - 2);
-        quickSortRecursive(a, inBetweenP1P2, iterationRight);
-        quickSortRecursive(a, iterationRight + 1, high);
+        quickSortRecursive(a, low,  lessThan - 1);
+        if(a[lessThan] < a[greaterThan]) quickSortRecursive(a, lessThan + 1, greaterThan - 1);
+        quickSortRecursive(a, greaterThan, high);
     }
+
+
+//      This is an early version of the 2-pivot quick sort
+//    public static double [] quickSort (double a[]){
+//        if(a == null) return null;
+//        int length = a.length;
+//        if(length <= 1) return a;
+//        //if(length <= 10) return insertionSort(a);   //if length <= 10, cut-off to insertion sort
+//        randomizeArray(a);      // O(N)
+//        quickSortRecursive(a, 0, a.length-1);
+//        return a;
+//
+//    }//end quicksort
+//
+//    private static void quickSortRecursive(double a[], int low, int high)
+//    {
+//        // This is a 2-pivot implementation of quick sort
+//        //if(high - low < 10) insertionSort(a, low, high);    // if section of array shorter than 10, cutoff to insertion sort
+//        if(low >= high) return;
+//        int lessThan = low, greaterThan = high;
+//        if(a[lessThan] > a[greaterThan]) exchange(a, lessThan, greaterThan);
+
+//        int inBetweenP1P2 = lessThan + 1;
+//        int iterationLeft = inBetweenP1P2;
+//        int iterationRight = greaterThan - 1;
+//        double iterationValue;
+//
+//        while(iterationLeft <= iterationRight)
+//        {
+//            iterationValue = a[iterationLeft];
+//            if(iterationValue < firstPivotValue)
+//                exchange(a, iterationLeft++, inBetweenP1P2++);
+//            else if(iterationValue > secondPivotValue)
+//                exchange(a, iterationLeft, iterationRight--);
+//            else iterationLeft++;
+//        }
+//
+//        exchange(a, inBetweenP1P2 - 1, lessThan);
+//        exchange(a, iterationRight + 1, greaterThan);
+//
+//
+//        quickSortRecursive(a, low,  inBetweenP1P2 - 2);
+//        quickSortRecursive(a, inBetweenP1P2, iterationRight);
+//        quickSortRecursive(a, iterationRight + 1, high);
+//    }
 
     /**
      * Sorts an array of doubles using Merge Sort.
