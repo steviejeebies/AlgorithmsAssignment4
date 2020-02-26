@@ -90,7 +90,7 @@ class SortComparison {
             value = a[i];
             j = i;
 
-            while((j > 0) && (a[j-1] > value)) {
+            while(j > 0 && a[j-1] < value) {
                 a[j] = a[j-1];
                 j = j - 1;
             }

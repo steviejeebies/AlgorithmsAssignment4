@@ -92,7 +92,7 @@ public class SortComparisonTest {
 
     public static boolean testAllAlgorithms(double [] arrayToSort) {
         double [] originalCopy = Arrays.copyOf(arrayToSort, arrayToSort.length);
-        double [] insertionSortResult = SortComparison.insertionSort(arrayToSort);
+        double [] insertionSortResult = SortComparison.insertionSort(originalCopy);
         double [] result;
         // For this, we have to assume insertion sort is correct. Since it should match all other
         // algorithms anyway, and if all tests are passed, then we can also assume insertion
