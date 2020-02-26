@@ -24,17 +24,17 @@ class SortComparison {
      * they are constant values.
      *
      */
-    public static void randomizeArray(double arr[])
-    {
-        Random randomValue = new Random();
-        int length = arr.length;
-        for (int index = length-1; index > 0; index--) {
-            int selectedValue = randomValue.nextInt(index+1);   // pick random integer (< size of index)
-            double temp = arr[index];  // store the value currently in array[index], as we will replace it
-            arr[index] = arr[selectedValue];    // get array[random generated value], store it in array[index]
-            arr[selectedValue] = temp;
-        }
-    }
+//    public static void randomizeArray(double arr[])
+//    {
+//        Random randomValue = new Random();
+//        int length = arr.length;
+//        for (int index = length-1; index > 0; index--) {
+//            int selectedValue = randomValue.nextInt(index+1);   // pick random integer (< size of index)
+//            double temp = arr[index];  // store the value currently in array[index], as we will replace it
+//            arr[index] = arr[selectedValue];    // get array[random generated value], store it in array[index]
+//            arr[selectedValue] = temp;
+//        }
+//    }
 
     /**
      * A method that randomises the order of the array to make it shorter.
